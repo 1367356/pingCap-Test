@@ -7,25 +7,25 @@ import java.util.Map.Entry;
 
 public class BplusNode<K extends Comparable<K>, V> {
 
-    /** 是否为叶子节点 */
+    // 是否为叶子节点
     protected boolean isLeaf;
 
-    /** 是否为根节点*/
+    // 是否为根节点
     protected boolean isRoot;
 
-    /** 父节点 */
+    // 父节点
     protected BplusNode<K, V> parent;
 
-    /** 叶节点的前节点*/
+    // 叶节点的前节点,叶子节点组织成链表
     protected BplusNode<K, V> previous;
 
-    /** 叶节点的后节点*/
+    // 叶节点的后节点
     protected BplusNode<K, V> next;
 
-    /** 节点的关键字 */
+    // 节点的关键字
     protected List<Entry<K, V>> entries;
 
-    /** 子节点 */
+    // 子节点，存放在一个链表里面
     protected List<BplusNode<K, V>> children;
 
     public BplusNode(boolean isLeaf) {
@@ -43,7 +43,6 @@ public class BplusNode<K extends Comparable<K>, V> {
     }
 
     public V get(K key) {
-
         //如果是叶子节点
         if (isLeaf) {
             int low = 0, high = entries.size() - 1, mid;
@@ -165,18 +164,18 @@ public class BplusNode<K extends Comparable<K>, V> {
             children.get(children.size()-1).insertOrUpdate(key, value, tree);
             //否则沿比key大的前一个子节点继续搜索
         }else {
-            int low = 0, high = entries.size() - 1, mid= 0;
-            int comp ;
+            int low = 0, high = entries.size() - 1, middle= 0;
+            int result ;
             while (low <= high) {
-                mid = (low + high) / 2;
-                comp = entries.get(mid).getKey().compareTo(key);
-                if (comp == 0) {
-                    children.get(mid+1).insertOrUpdate(key, value, tree);
+                middle = (low + high) / 2;
+                result = entries.get(middle).getKey().compareTo(key);
+                if (result == 0) {
+                    children.get(middle+1).insertOrUpdate(key, value, tree);
                     break;
-                } else if (comp < 0) {
-                    low = mid + 1;
+                } else if (result < 0) {
+                    low = middle + 1;
                 } else {
-                    high = mid - 1;
+                    high = middle - 1;
                 }
             }
             if(low>high){
@@ -184,6 +183,9 @@ public class BplusNode<K extends Comparable<K>, V> {
             }
         }
     }
+    /**
+     *  复制原节点关键字到分裂出来的新节点
+     */
 
     private void copy2Nodes(K key, V value, BplusNode<K,V> left,
                             BplusNode<K,V> right, BplusTree<K,V> tree) {
@@ -278,17 +280,17 @@ public class BplusNode<K extends Comparable<K>, V> {
 
     /** 判断当前节点是否包含该关键字*/
     protected int contains(K key) {
-        int low = 0, high = entries.size() - 1, mid;
-        int comp ;
+        int low = 0, high = entries.size() - 1, middle;
+        int result ;
         while (low <= high) {
-            mid = (low + high) / 2;
-            comp = entries.get(mid).getKey().compareTo(key);
-            if (comp == 0) {
-                return mid;
-            } else if (comp < 0) {
-                low = mid + 1;
+            middle = (low + high) / 2;
+            result = entries.get(middle).getKey().compareTo(key);
+            if (result == 0) {
+                return middle;
+            } else if (result < 0) {
+                low = middle + 1;
             } else {
-                high = mid - 1;
+                high = middle - 1;
             }
         }
         return -1;
@@ -297,39 +299,22 @@ public class BplusNode<K extends Comparable<K>, V> {
     /** 插入到当前节点的关键字中*/
     protected void insertOrUpdate(K key, V value){
         //二叉查找，插入
-        int low = 0, high = entries.size() - 1, mid;
-        int comp ;
+        int low = 0, high = entries.size() - 1, middle;
+        int result ;
         while (low <= high) {
-            mid = (low + high) / 2;
-            comp = entries.get(mid).getKey().compareTo(key);
-            if (comp == 0) {
-                entries.get(mid).setValue(value);
+            middle = (low + high) / 2;
+            result = entries.get(middle).getKey().compareTo(key);
+            if (result == 0) {
+                entries.get(middle).setValue(value);
                 break;
-            } else if (comp < 0) {
-                low = mid + 1;
+            } else if (result < 0) {
+                low = middle + 1;
             } else {
-                high = mid - 1;
+                high = middle - 1;
             }
         }
         if(low>high){
             entries.add(low, new SimpleEntry<K, V>(key, value));
         }
-    }
-
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("isRoot: ");
-        sb.append(isRoot);
-        sb.append(", ");
-        sb.append("isLeaf: ");
-        sb.append(isLeaf);
-        sb.append(", ");
-        sb.append("keys: ");
-        for (Entry<K,V> entry : entries){
-            sb.append(entry.getKey());
-            sb.append(", ");
-        }
-        sb.append(", ");
-        return sb.toString();
     }
 }

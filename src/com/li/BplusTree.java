@@ -75,16 +75,17 @@ public class BplusTree<K extends Comparable<K>, V>{
     }
 
 
+    /**
+     * 根据键查找值
+     * @param tree b+树索引
+     */
     public void testRandomSearch(BplusTree<String, String> tree) {
-        InputStream Systemin = this.getClass().getResourceAsStream("/searchData");
+        InputStream Systemin = this.getClass().getResourceAsStream("/searchData.txt");
         Scanner scanner = new Scanner(Systemin);
-
         while (scanner.hasNextLine()) {
             String key = scanner.nextLine();
             if (tree.get(key) == null) {
                 System.out.println("索引中不存在键:" + key);
-//                System.err.println("索引中不存在键:" + key);
-//                break;
             }else {
                 System.out.println("打印键"+key+"对应的值"+tree.get(key));
             }
@@ -92,12 +93,12 @@ public class BplusTree<K extends Comparable<K>, V>{
     }
 
     /**
-     * 插入数据
+     * 向索引中插入数据
      * @param tree
      */
     public void testRandomInsert(BplusTree<String, String> tree) {
 
-        InputStream Systemin = this.getClass().getResourceAsStream("/insertData");
+        InputStream Systemin = this.getClass().getResourceAsStream("/insertData.txt");
         Scanner scanner = new Scanner(Systemin);
 
         while (scanner.hasNextLine()) {
